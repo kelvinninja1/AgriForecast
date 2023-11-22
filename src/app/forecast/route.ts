@@ -27,3 +27,4 @@ export async function GET(request: Request) {
     return Response.json({ error: error.message || error.toString() });
   }
 }
+export const dynamic = "force-dynamic";
