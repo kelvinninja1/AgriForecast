@@ -169,6 +169,12 @@ export default function Forecast() {
           <li
             key={forcastMonth.id}
             className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6"
+            onClick={() => {
+              console.log("Clicked: ", forcastMonth);
+              alert(
+                "CropProphect (AI Assistant) is coming soon! 🚀 as a subscription service",
+              );
+            }}
           >
             <div className="flex min-w-0 gap-x-4">
               <img
