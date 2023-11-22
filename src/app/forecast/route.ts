@@ -1,29 +1,30 @@
 import { headers } from "next/headers";
+import { promisify } from "util";
+import { exec } from "child_process";
+
+const promisifiedExec = promisify(exec);
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-  var myHeaders = new Headers();
-  myHeaders.append("auth-key", "4rKtCc6YvWnsS8EPzCEb9SuS3xEzp5KM");
-  myHeaders.append("Content-Type", "application/json");
+  try {
+    const { searchParams } = new URL(request.url);
+    console.log("searchParams", searchParams);
+    console.log("I am here");
+    let { lat, lon } = Object.fromEntries(searchParams);
 
-  var raw = JSON.stringify({
-    lat: 5.65178,
-    lon: 5,
-  });
+    if (!lat || !lon) {
+      lat = "5.65178";
+      lon = "5";
+    }
 
-  var requestOptions = {
-    method: "GET",
-    headers: myHeaders,
-    body: raw,
-    redirect: "follow",
-  };
-  const res = await fetch(`https://b2b.ignitia.se/api/ocp/forecast/longrange`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const product = await res.json();
+    const command = `curl --location --request GET 'https://b2b.ignitia.se/api/ocp/forecast/longrange' --header 'auth-key: 4rKtCc6YvWnsS8EPzCEb9SuS3xEzp5KM' --header 'Content-Type: application/json' --data-raw '{ "lat": ${lat}, "lon": ${lon} }'`;
 
-  return Response.json({ product });
+    const { stdout, stderr } = await promisifiedExec(command);
+
+    console.log(`stdout: ${stdout}`);
+
+    return Response.json({ stdout, stderr, command });
+  } catch (error: any) {
+    console.error(`exec error: ${error}`);
+    return Response.json({ error: error.message || error.toString() });
+  }
 }

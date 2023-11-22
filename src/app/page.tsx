@@ -19,7 +19,6 @@ export default function Home() {
       }}
     >
       <div className="lg:px-32">
-        <CropsFilter />
         <Forecast />
       </div>
     </main>
