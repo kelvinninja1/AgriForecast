@@ -1,5 +1,4 @@
 import Forecast from "@/app/Forecast";
-import CropsFilter from "@/app/CropsFilter";
 
 const theme = {
   background: "#f0f0f0",
