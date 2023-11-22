@@ -136,24 +136,26 @@ export default function Forecast() {
             </div>
             <div className="mt-8 grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-3 lg:grid-cols-3 border-2 p-4 border-amber-400">
               {crops.map((channel, index) => (
-                <button
-                  key={index}
-                  className="flex flex-col bg-white/5 p-8 relative isolate py-20 z-0 group border-gray-700 "
-                >
-                  <img
-                    src={channel.backImage}
-                    alt=""
-                    className="absolute inset-0 -z-10 h-full w-full object-cover"
-                  />
-                  <div className="text-sm font-semibold leading-6 text-gray-700 invisible group-hover:visible opacity-100 transition-opacity duration-300">
-                    Show only months suitable for {channel.name}
-                  </div>
-                  <div className="order-first text-3xl font-semibold tracking-tight text-white">
+                <>
+                  <button
+                    key={index}
+                    className="flex flex-col bg-white/5 p-8 relative isolate py-20 z-0 group border-gray-700 "
+                  >
+                    <img
+                      src={channel.backImage}
+                      alt=""
+                      className="absolute inset-0 -z-10 h-full w-full object-contain"
+                    />
+                    <div className="text-sm font-semibold leading-6 text-gray-700 invisible group-hover:visible opacity-100 transition-opacity duration-300 group-hover:backdrop-blur-3xl">
+                      Show only months suitable for {channel.name}
+                    </div>
+                  </button>
+                  <div className="order-first text-3xl font-semibold tracking-tight text-white backdrop-blur-sm">
                     <div className="text-gray-900 hover:text-gray-500">
                       {channel.name}
                     </div>
                   </div>
-                </button>
+                </>
               ))}
             </div>
           </div>
