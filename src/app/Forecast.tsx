@@ -1,5 +1,8 @@
 "use client";
-import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronRightIcon,
+  PresentationChartLineIcon,
+} from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -7,79 +10,59 @@ const crops = [
   {
     name: "Maize",
     backImage: "/crops/maize.png",
+    needs: {
+      temperature: {
+        min: 20,
+        max: 30,
+      },
+      rainfall: {
+        min: 400,
+        max: 800,
+      },
+    },
   },
   {
     name: "Cabbage",
     backImage: "/crops/cabbage.png",
+    needs: {
+      temperature: {
+        min: 15,
+        max: 20,
+      },
+      rainfall: {
+        min: 450,
+        max: 600,
+      },
+    },
   },
   {
     name: "Carrot",
     backImage: "/crops/carrot.png",
-  },
-];
-
-const forcastMonths = [
-  {
-    name: "December",
-    email: "leslie.alexander@example.com",
-    role: "Co-Founder / CEO",
-    imageUrl: "/resources/icon_01d.png",
-    href: "#",
-    lastSeen: "3h ago",
-    lastSeenDateTime: "2023-01-23T13:23Z",
-  },
-  {
-    name: "January",
-    email: "michael.foster@example.com",
-    role: "Co-Founder / CTO",
-    imageUrl: "/resources/icon_02d.png",
-    href: "#",
-    lastSeen: "3h ago",
-    lastSeenDateTime: "2023-01-23T13:23Z",
-  },
-  {
-    name: "February",
-    email: "dries.vincent@example.com",
-    role: "Business Relations",
-    imageUrl: "/resources/icon_03n.png",
-    href: "#",
-    lastSeen: null,
-  },
-  {
-    name: "March",
-    email: "lindsay.walton@example.com",
-    role: "Front-end Developer",
-    imageUrl: "/resources/icon_03d.png",
-    href: "#",
-    lastSeen: "3h ago",
-    lastSeenDateTime: "2023-01-23T13:23Z",
-  },
-  {
-    name: "April",
-    email: "courtney.henry@example.com",
-    role: "Designer",
-    imageUrl: "/resources/icon_01n.png",
-    href: "#",
-    lastSeen: "3h ago",
-    lastSeenDateTime: "2023-01-23T13:23Z",
-  },
-  {
-    name: "May",
-    email: "tom.cook@example.com",
-    role: "Director of Product",
-    imageUrl: "/resources/icon_02n.png",
-    href: "#",
-    lastSeen: null,
+    needs: {
+      temperature: {
+        min: 16,
+        max: 21,
+      },
+      rainfall: {
+        min: 400,
+        max: 600,
+      },
+    },
   },
 ];
 
 function getForecastCrops(forcastMonth: any) {
   // based on: forcastMonth.rainfall, forcastMonth.rainfall_ano, forcastMonth.rainfall_mean, forcastMonth.temperature_mean select suitable crops
-  if (forcastMonth.rainfall > forcastMonth.rainfall_mean) {
-    return "Maize, Cabbage";
-  } else {
-    return "Carrot";
-  }
+  return crops
+    .filter(
+      (crop) =>
+        (crop.needs.temperature.min < forcastMonth.temperature_mean &&
+          crop.needs.temperature.max > forcastMonth.temperature_mean) ||
+        (crop.needs.rainfall.min / 2 < forcastMonth.rainfall &&
+          crop.needs.rainfall.max > forcastMonth.rainfall),
+    )
+    .map((crop) => crop.name)
+    .join(", ");
 }
 
 function getForecastIllustration(forcastMonth: any) {
@@ -103,6 +86,7 @@ function getForecastIllustration(forcastMonth: any) {
 
 export default function Forecast() {
   const [forecast, setForecast] = useState([] as any);
+  const [selectedCrop, setSelectedCrop] = useState("");
 
   useEffect(() => {
     axios
@@ -127,32 +111,38 @@ export default function Forecast() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl lg:max-w-none">
             <div className="text-center">
-              <h2 className="text-3xl font-bold tracking-tightcsm:text-4xl">
+              <a
+                className="text-3xl font-bold tracking-tightcsm:text-4xl"
+                href="/"
+              >
                 Agri Forecast ✨
-              </h2>
+              </a>
               <p className="mt-4 text-lg leading-8">
                 Get monthly forecast for your farm ahead of time
               </p>
             </div>
             <div className="mt-8 grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-3 lg:grid-cols-3 border-2 p-4 border-amber-400">
-              {crops.map((channel, index) => (
+              {crops.map((crop, index) => (
                 <>
                   <button
                     key={index}
-                    className="flex flex-col bg-white/5 p-8 relative isolate py-20 z-0 group border-gray-700 "
+                    onClick={() => {
+                      setSelectedCrop(crop.name);
+                    }}
+                    className="flex flex-col bg-white/5 p-8 relative isolate py-20 z-0 group border-gray-700"
                   >
                     <img
-                      src={channel.backImage}
+                      src={crop.backImage}
                       alt=""
                       className="absolute inset-0 -z-10 h-full w-full object-contain"
                     />
                     <div className="text-sm font-semibold leading-6 text-gray-700 invisible group-hover:visible opacity-100 transition-opacity duration-300 group-hover:backdrop-blur-3xl">
-                      Show only months suitable for {channel.name}
+                      Show only months suitable for {crop.name}
                     </div>
                   </button>
-                  <div className="order-first text-3xl font-semibold tracking-tight text-white backdrop-blur-sm">
+                  <div className="order-first text-md lg:text-2xl font-semibold tracking-tight text-white backdrop-blur-sm">
                     <div className="text-gray-900 hover:text-gray-500">
-                      {channel.name}
+                      {crop.name}
                     </div>
                   </div>
                 </>
@@ -165,62 +155,66 @@ export default function Forecast() {
         role="list"
         className="divide-y divide-gray-100 overflow-hidden bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl"
       >
-        {forecast?.monthly?.map((forcastMonth: any) => (
-          <li
-            key={forcastMonth.id}
-            className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6"
-            onClick={() => {
-              console.log("Clicked: ", forcastMonth);
-              alert(
-                "CropProphect (AI Assistant) is coming soon! 🚀 as a subscription service",
-              );
-            }}
-          >
-            <div className="flex min-w-0 gap-x-4">
-              <img
-                className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                src={getForecastIllustration(forcastMonth)}
-                alt=""
-              />
-              <div className="min-w-0 flex-auto">
-                <p className="text-sm font-semibold leading-6 text-gray-900">
-                  <button>
-                    <span className="absolute inset-x-0 -top-px bottom-0" />
-                    {forcastMonth.month_start} - {forcastMonth.month_end}
-                  </button>
-                </p>
-                <p className="mt-1 flex text-xs leading-5 text-gray-500">
-                  <span className="relative truncate hover:underline">
-                    {getForecastCrops(forcastMonth)}
-                  </span>
-                </p>
-              </div>
-            </div>
-            <div className="flex shrink-0 items-center gap-x-4">
-              <div className="hidden sm:flex sm:flex-col sm:items-end">
-                <p className="text-sm leading-6 text-gray-900">
-                  {forcastMonth.rainfall} mm with Anomaly of{" "}
-                  {forcastMonth.rainfall_ano} mm
-                </p>
-                <div className="mt-1 flex items-center gap-x-1.5">
-                  <div className="flex-none rounded-full bg-emerald-500/20 p-1">
-                    <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  </div>
-                  <p className="text-xs leading-5 text-gray-500">
-                    {forcastMonth.temperature_mean} °C
+        {forecast?.monthly
+          ?.filter((forcastMonth: any) =>
+            getForecastCrops(forcastMonth).includes(selectedCrop),
+          )
+          .map((forcastMonth: any) => (
+            <li
+              key={forcastMonth.id}
+              className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6"
+              onClick={() => {
+                console.log("Clicked: ", forcastMonth);
+                alert(
+                  "CropProphect (AI Assistant) is coming soon! 🚀 as a subscription service",
+                );
+              }}
+            >
+              <div className="flex min-w-0 gap-x-4">
+                <img
+                  className="h-12 w-12 flex-none rounded-full bg-gray-50"
+                  src={getForecastIllustration(forcastMonth)}
+                  alt=""
+                />
+                <div className="min-w-0 flex-auto">
+                  <p className="text-sm font-semibold leading-6 text-gray-900">
+                    <button>
+                      <span className="absolute inset-x-0 -top-px bottom-0" />
+                      {forcastMonth.month_start} - {forcastMonth.month_end}
+                    </button>
+                  </p>
+                  <p className="mt-1 flex text-xs leading-5 text-gray-500">
+                    <span className="relative truncate hover:underline">
+                      {getForecastCrops(forcastMonth)}
+                    </span>
                   </p>
                 </div>
-                <p className="mt-1 text-xs leading-5 text-gray-500">
-                  Discuss with CropProphect (AI Assistant)
-                </p>
               </div>
-              <ChevronRightIcon
-                className="h-5 w-5 flex-none text-gray-400"
-                aria-hidden="true"
-              />
-            </div>
-          </li>
-        ))}
+              <div className="flex shrink-0 items-center gap-x-4">
+                <div className="hidden sm:flex sm:flex-col sm:items-end">
+                  <p className="text-sm leading-6 text-gray-900">
+                    Rainfall of {forcastMonth.rainfall}
+                    mm, showing an anomaly of {forcastMonth.rainfall_ano} mm
+                  </p>
+                  <div className="mt-1 flex items-center gap-x-1.5">
+                    <div className="flex-none rounded-full bg-emerald-500/20 p-1">
+                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    </div>
+                    <p className="text-xs leading-5 text-gray-500">
+                      {forcastMonth.temperature_mean} °C
+                    </p>
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-gray-500">
+                    Discuss with CropProphect (AI Assistant)
+                  </p>
+                </div>
+                <ChevronRightIcon
+                  className="h-5 w-5 flex-none text-gray-400"
+                  aria-hidden="true"
+                />
+              </div>
+            </li>
+          ))}
       </ul>
     </>
   );
