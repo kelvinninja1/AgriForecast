@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { promisify } from "util";
 import { exec } from "child_process";
 
@@ -27,4 +29,3 @@ export async function GET(request: Request) {
     return Response.json({ error: error.message || error.toString() });
   }
 }
-export const dynamic = "force-dynamic";
