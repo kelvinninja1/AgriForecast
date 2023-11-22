@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import { promisify } from "util";
 import { exec } from "child_process";
 
