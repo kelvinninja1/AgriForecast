@@ -129,7 +129,7 @@ export default function Forecast() {
                     onClick={() => {
                       setSelectedCrop(crop.name);
                     }}
-                    className="flex flex-col bg-white/5 p-8 relative isolate py-20 z-0 group border-gray-700"
+                    className="flex flex-col bg-white/5 px-8 relative isolate py-2 lg:py-20 z-0 group border-gray-700"
                   >
                     <img
                       src={crop.backImage}
@@ -166,7 +166,7 @@ export default function Forecast() {
               onClick={() => {
                 console.log("Clicked: ", forcastMonth);
                 alert(
-                  "CropProphect (AI Assistant) is coming soon! 🚀 as a subscription service",
+                  "CropProphet (AI Assistant) is coming soon! 🚀 as a subscription service",
                 );
               }}
             >
@@ -205,7 +205,7 @@ export default function Forecast() {
                     </p>
                   </div>
                   <p className="mt-1 text-xs leading-5 text-gray-500">
-                    Discuss with CropProphect (AI Assistant)
+                    Discuss with CropProphet (AI Assistant)
                   </p>
                 </div>
                 <ChevronRightIcon
